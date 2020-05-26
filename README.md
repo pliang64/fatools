@@ -5,7 +5,7 @@ The script is written in python 2, so you will need to use python 2 to run the s
 Simply download the repository, navigate to the folder where fatools.py is located. To use the tools you have to start any command with 
 `python fatools.py`
 
-# List of commands
+### List of commands
 * search
 * split
 * extract
