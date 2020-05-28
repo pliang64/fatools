@@ -13,7 +13,7 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 * filter
 
 To explore the different tools under a specific command simply type
-`python fatools.py command` and a list of all the tools available will be displayed.
+`python fatools.py specific_command` and a list of all the tools available will be displayed.
 
 ### Examples
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
