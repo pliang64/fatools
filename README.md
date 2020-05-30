@@ -110,8 +110,8 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 To explore the different tools under a specific command in the terminal simply type
 `python fatools.py command` and a list of all the tools available under that command will be displayed.
 
-### Make fatools available from any directory
----
+Make fatools available from any directory
+------
 #### Linux
 1. Open the terminal and navigate to where you have downloaded fatools.py
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
@@ -128,8 +128,8 @@ To explore the different tools under a specific command in the terminal simply t
 5. You should be able to run fatools.py from anywhere!
 
 
-### Examples
----
+Examples
+------
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
 
 To extract the fasta sequences from exampleFasta.fasta based on the list of IDs:</br>
