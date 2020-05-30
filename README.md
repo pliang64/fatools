@@ -95,7 +95,7 @@ Simply download the repository, navigate to the folder where fatools.py is locat
  **-g N** ignore sequences with N or more Ns (print to STDERR) </br>
  
 **-r 1/2 1:** remove redundant entry based on ID, 2: keep redudant entries by adding 
- a random sting to the identical IDs) </br>
+ a a number to the identical IDs) </br>
  
 **-R 1/N** identify and remove identical entries (redudant entries in STDERR and NR entries on STDOUT) 
  by sequences based on 1: complete sequence; N: only the first and last N bases </br>
@@ -134,7 +134,7 @@ Navigate to the exampleFiles directory in this repository. In there, a fasta fil
 
 To extract the fasta sequences from exampleFasta.fasta based on the list of IDs:</br>
 `fatools.py search -F IDlist.txt exampleFasta.fa` </br>
-Output: </br>
+
 <code>>NP_001245510.1 notch, isoform B [Drosophila melanogaster]
 NNMQSQRSRRRSRAPNTWICFWINKMHAVASLPASLPLLLLTLAFANLPNTVRGTDTALVAASCTSVGCQNG
 GTCVTQLNGKTYCACDSHYVGDYCEHRNPCNSMRCQNGGTCQVTFRNGRPGISCKCPLGFDESLCEIAVP
@@ -152,7 +152,22 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT </code>
 
 To report summary statistics:</br>
 `fatools.py report -s exampleFasta.fa`</br>
-Which yields:</br>
+
 `Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp`
+
+To get fasta sequences with a maximum length
+
+`python fatools.py filter -L250 exampleFasta.fa` </br>
+
+<code>>DY343456.1
+CAAACAGCCTGGCTTAGCAAAAAACCAACAGAGCAGTCTGGATGAAAGTAAGGAAATATGTAGTGCTGGA
+TGTGGCACAGATGCTCGTGCCACCTCATTACTTCCTGAAACCACCAGCTTATCGCCCAACACAGACCGAA
+TGAATGTAGAAAAGGCTGAACTCTGTAATAAAAGTAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCA </code>
+
+<code>>FY343456.1
+TGTGGCACAGATGCTCGTGCCACCTCATTACTTCCTGAAACCACCAGCTTATCGCCCAACACAGACCGAA
+TGAATGTAGAAAAGGCTGAACTCTGTAATAAAAGCAAACAGCCTGGCTTAGCAAAAAACCAACAGAGCAG
+TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT </code?
+
 
 
