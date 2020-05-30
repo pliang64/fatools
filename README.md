@@ -22,8 +22,10 @@ Simply download the repository, navigate to the folder where fatools.py is locat
   **-v**  use with -s, -d or -f to negate the search
 </details>
 
+---
+
 <details>
-  <summary> split </summary>
+  <summary> split </summary> 
   
  **-G N** split the sequences as non-gap framments, N is the number of consecutive Ns, default 1
  Use -G with -t to  print gap positions only, default 0 </br>
@@ -37,6 +39,7 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 **-o file:** output file\n
 </details>
 
+---
 <details>
   <summary> extract </summary>
   
@@ -51,6 +54,7 @@ Simply download the repository, navigate to the folder where fatools.py is locat
      use '-B N -F M' to extract sequences from N to N+M (inclusive) </br> 
 </details>
 
+---
 <details>
   <summary> report </summary>
   
@@ -81,6 +85,7 @@ Simply download the repository, navigate to the folder where fatools.py is locat
   **-m** remove all non-ACGT letters
 </details>
 
+---
 <details>
   <summary> filter </summary>
   
