@@ -155,7 +155,7 @@ To report summary statistics:</br>
 
 `Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp`
 
-To get fasta sequences with a maximum length
+To get fasta sequences with a specific maximum length
 
 `python fatools.py filter -L250 exampleFasta.fa` </br>
 
