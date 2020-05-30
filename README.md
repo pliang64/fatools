@@ -20,9 +20,9 @@ Simply download the repository, navigate to the folder where fatools.py is locat
   **-1**  find single match for -d and -s </br>
   
   **-v**  use with -s, -d or -f to negate the search
+  
+  ---
 </details>
-
----
 
 <details>
   <summary> split </summary> 
@@ -37,9 +37,10 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 **-M N** divide sequences into chunks ~N MB (million bp) in size </br>
 
 **-o file:** output file\n
-</details>
 
 ---
+</details>
+
 <details>
   <summary> extract </summary>
   
@@ -52,9 +53,10 @@ Simply download the repository, navigate to the folder where fatools.py is locat
  
  **-B N** extract from the Nth entry to the last entry
      use '-B N -F M' to extract sequences from N to N+M (inclusive) </br> 
+     
+ ---
 </details>
 
----
 <details>
   <summary> report </summary>
   
@@ -83,9 +85,10 @@ Simply download the repository, navigate to the folder where fatools.py is locat
   **-t** turn all non-ACGT letters to N </br>
   
   **-m** remove all non-ACGT letters
+  
+  ---
 </details>
 
----
 <details>
   <summary> filter </summary>
   
@@ -100,6 +103,8 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 **-l N** sequence minimal length </br>
 
 **-L N** sequence maximal length </br>
+
+---
 </details>
 
 To explore the different tools under a specific command in the terminal simply type
