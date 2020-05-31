@@ -123,9 +123,11 @@ Make fatools available from any directory
 #### Windows
 1. Type 'control panel' in the Windows search bar
 2. Go to System > Advanced System settings > Environment variables
-3. Under system variables, selecth 'Path' and click 'Edit' and then 'New'
-4. Add the path of where you have fatools.py located and click OK
-5. You should be able to run fatools.py from anywhere!
+3. Under system variables, select 'Path' and click 'Edit' and then 'New'
+4. If you don't want to type the .py extension every time, then add .PY in your PATHEXT system variable, which is also found under system variables.
+5. Add the path of where you have fatools.py located and click OK
+6. You should be able to run fatools.py from anywhere!
+
 
 
 Examples
@@ -157,7 +159,7 @@ To report summary statistics:</br>
 
 `Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp`
 
-To get fasta sequences with a specific maximum length
+To get fasta sequences with a specific maximum length filter
 
 `python fatools.py filter -L250 exampleFasta.fa` </br>
 
