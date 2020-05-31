@@ -2,8 +2,8 @@
 A headless python tool package for working with fasta sequences
 
 The script is written in python 2, so you will need to use python 2 to run the script.
-Simply download the repository, navigate to the folder where fatools.py is located. To use the tools you have to start any command with 
-`python fatools.py`. If you want to run the script without having to type 'python' or run it from any directory in your terminal, follow the instructions under **Make fatools available from any directory**.
+Simply download the repository, navigate to the folder where fatools is located. To use the tools you have to start any command with 
+`python fatools`. If you want to run the script without having to type 'python' or run it from any directory in your terminal, follow the instructions under **Make fatools available from any directory**.
 
 ### List of commands
 <details>
@@ -108,25 +108,24 @@ Simply download the repository, navigate to the folder where fatools.py is locat
 </details>
 
 To explore the different tools under a specific command in the terminal simply type
-`python fatools.py command` and a list of all the tools available under that command will be displayed.
+`python fatools command` and a list of all the tools available under that command will be displayed.
 
 Make fatools available from any directory
 ------
 #### Linux
-1. Open the terminal and navigate to where you have downloaded fatools.py
+1. Open the terminal and navigate to where you have downloaded fatools
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
-3. Copy this output to the beggining of fatools.py as `#!/usr/bin/python`.
-4. Run the following command to make the script executable `chmod +x fatools.py`
-5. Add fatools.py to your bin directory
-6. You should be able to run fatools.py from anywhere!
+3. Copy this output to the beggining of fatools as `#!/usr/bin/python`.
+4. Run the following command to make the script executable `chmod +x fatools`
+5. Add fatools to your bin directory
+6. You should be able to run fatools from anywhere!
 
 #### Windows
 1. Type 'control panel' in the Windows search bar
-2. Go to System > Advanced System settings > Environment variables
+2. Go to System and Security > System > Advanced System settings > Environment variables
 3. Under system variables, select 'Path' and click 'Edit' and then 'New'
-4. If you don't want to type the .py extension every time, then add .PY in your PATHEXT system variable, which is also found under system variables.
-5. Add the path of where you have fatools.py located and click OK
-6. You should be able to run fatools.py from anywhere!
+4. Add the path of where you have fatools located and click OK
+5. You should be able to run fatools from anywhere!
 
 
 
@@ -135,7 +134,7 @@ Examples
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
 
 To extract the fasta sequences from exampleFasta.fasta based on the list of IDs:</br>
-`fatools.py search -F IDlist.txt exampleFasta.fa` </br>
+`fatools search -F IDlist.txt exampleFasta.fa` </br>
 
 ```
 NP_001245510.1 notch, isoform B [Drosophila melanogaster]
@@ -155,13 +154,13 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT
 ```
 
 To report summary statistics:</br>
-`fatools.py report -s exampleFasta.fa`</br>
+`fatools report -s exampleFasta.fa`</br>
 
 `Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp`
 
 To get fasta sequences with a specific maximum length filter
 
-`python fatools.py filter -L250 exampleFasta.fa` </br>
+`python fatools filter -L250 exampleFasta.fa` </br>
 
 ```
 DY343456.1
@@ -177,7 +176,7 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT
 
 You can combine multiple utilities using pipe "|". Let's say you want to see the short defline and the length of the first 3 fasta sequences in a fasta file.
 
-`fatools.py extract -F3 sequenceTesting2.txt  | fatools.py report -l -`
+`fatools extract -F3 sequenceTesting2.txt  | fatools report -l -`
 
 ```
 AY211956.1Macropus(BRCA1)gene,partialcds       698 
