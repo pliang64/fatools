@@ -1,9 +1,12 @@
 # fatools
-A headless python tool package for working with fasta sequences
+A python utillity package for working with fasta sequences.
 
-The script is written in python 2, so you will need to use python 2 to run the script.
-Simply download the repository, navigate to the folder where fatools is located. To use the tools you have to start any command with 
-`python fatools`. If you want to run the script without having to type 'python' or run it from any directory in your terminal, follow the instructions under **Make fatools available from any directory**.
+A total of XX utilities/options for working with fasta sequences are organized under yy main commands.
+The utilities ranges from searching specific sequence entries from a large set of fasta sequences based on 
+ID or a text string in the defline or a sequence motif to spliting a large sequence file into small chuncks, 
+reporting summary stats of a genome assembly and display sequences in reverse complementary. 
+It allows input from and output to stdout, therefore multiple processes can be done via use of pile (|).
+You must use python 2 to run fatools.
 
 ### List of commands
 <details>
@@ -183,8 +186,3 @@ AY211956.1Macropus(BRCA1)gene,partialcds       698
 NP_001245510.1  1262 
 DY343456.1      210
 ``` 
-
-
-
-
-
