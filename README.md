@@ -123,10 +123,9 @@ use -l N -L M for sequences with length from N to M bp (inclusive).</br>
 ---
 </details>
 
-
-<h2>Making fatools executable and available from any directory</h2>
+<p><h2>Making fatools executable and available from any directory</h2>
 ------
-#### Linux
+####Linux
 1. Open the terminal and navigate to where you have downloaded fatools
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
 3. Copy this output to the beggining of fatools as `#!/usr/bin/python`.
@@ -142,13 +141,12 @@ use -l N -L M for sequences with length from N to M bp (inclusive).</br>
 5. You should be able to run fatools from anywhere!
 
 
-
 <p><h2>Examples</h2>
 ------
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
 
 To extract the fasta sequences from exampleFasta.fasta based on the list of IDs:</br>
-`fatools search -F IDlist.txt exampleFasta.fa` </br>
+'fatools search -F IDlist.txt exampleFasta.fa' </br>
 
 ```
 NP_001245510.1 notch, isoform B [Drosophila melanogaster]
@@ -168,13 +166,13 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT
 ```
 
 To report summary statistics:</br>
-`fatools report -s exampleFasta.fa`</br>
+'fatools report -s exampleFasta.fa'</br>
 
-`Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp`
+Total 2,868 bps from qualified 5 sequences (5 total); length average: 573 (210-1262) bp; N50: 698 bp
 
 To get fasta sequences with a specific maximum length filter
 
-`python fatools filter -L250 exampleFasta.fa` </br>
+'python fatools filter -L250 exampleFasta.fa' </br>
 
 ```
 DY343456.1
@@ -190,7 +188,7 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT
 
 You can combine multiple utilities using pipe "|". Let's say you want to see the short defline and the length of the first 3 fasta sequences in a fasta file.
 
-fatools extract -F3 sequenceTesting2.txt  | fatools report -l -
+'fatools extract -F3 sequenceTesting2.txt  | fatools report -l -'
 
 ```
 AY211956.1Macropus(BRCA1)gene,partialcds       698 
@@ -200,4 +198,4 @@ DY343456.1      210
 
 Or extract the sequences from a large sequence set for a list of IDs and then search sequences with a specific sequence by using
 
-fatools search -F IDlist.txt exampleFasta.fa |fatools -S AAATAAA -
+'fatools search -F IDlist.txt exampleFasta.fa |fatools -S AAATAAA -'
