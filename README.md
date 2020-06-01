@@ -5,7 +5,87 @@ The utilities range from searching specific sequence entries from a large set of
 ID or a text string in the defline or a sequence motif to spliting a large sequence file into small chuncks, 
 reporting summary stats of a genome assembly, and filtring sequences by length or gap size. Furthermore, by allowing input from and output to stdout, multiple processes can be done sequencially in one line of commpands via use of pipe (|). 
 
-### List of commands
+### List of subcommands
+
+Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>' displays the detailed utilities/options for the subcommand.
+
+<details>
+  <summary> convert </summary>
+  
+  **-r** print sequence in revevrse compliment </br>
+  
+  **-N** convert all non-ACGT letters to N </br>
+  
+  **-r** remove all non-ACGT letters
+  
+  ---
+</details>
+
+<details>
+  <summary> extract </summary>
+  
+**-I N** extract sequence from N bp to the end (1-based), works with a single fasta entry. </br>
+
+**-E N** extract sequence up to to N bp (1-based), works with a single fasta entry
+   use '-I N -E M' to extract sequence from 'N to N+M' bp (inclusive) </br>
+   
+ **-F N** extract the first N fasta entries </br>
+ 
+ **-B N** extract from the Nth entry to the last entry</br>
+ 
+ use '-B N -F M' to extract sequences from N to N+M (inclusive) </br>
+ 
+These utilities were designed to work with single long sequences, even though it will with multiple sequences but with the same applying to all sequences. </br>
+     
+ ---
+</details>
+
+<details>
+  <summary> filter </summary>
+  
+ **-g N** ignore sequences with N or more Ns by printing to STDERR. </br>
+ 
+**-r 1/2** 1: remove redundant entry based on ID, 2: keep redudant entries by adding 
+ a serial number to the identical IDs.</br>
+ 
+**-R 1/N** identify and remove identical entries based on sequence by printing redundant entries to STDERR. 
+  1: use complete sequence; N: only the first and last N bases. </br>
+ 
+**-l N** print sequences with a minimal length of N bp </br>
+
+**-L N** print sequences with a maximal length of N bp</br>
+
+<p>use -l N -L M for printing sequences with length from N to M bp</p>
+
+---
+</details>
+
+<details>
+  <summary> report </summary>
+  
+  **-f** print fasta as in the original </br>
+  
+  **-F** print fasta with sequence in one line </br>
+  
+  **-n** print sequence without define </br>
+  
+  **-d** print short defline before the first space </br>
+  
+  **-D** print the original defline </br>
+  
+  **-c** print the number of fasta entries </br>
+  
+  **-l** print short defline\tlength </br>
+  
+  **-L** print original defline\tlength </br>
+  
+  **-s** print sequence summary statistics including N50 </br>
+  
+  **-S** print sequence summary statistics plus detailed gap info </br>
+  
+  ---
+</details>
+
 <details>
   <summary> search </summary>
   
@@ -40,79 +120,6 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
 
 ---
 </details>
-
-<details>
-  <summary> extract </summary>
-  
-**-I N** extract sequence from N bp to the end (1-based), works with a single fasta entry. </br>
-
-**-E N** extract sequence up to to N bp (1-based), works with a single fasta entry
-   use '-I N -E M' to extract sequence from 'N to N+M' bp (inclusive) </br>
-   
- **-F N** extract the first N fasta entries </br>
- 
- **-B N** extract from the Nth entry to the last entry</br>
- 
- use '-B N -F M' to extract sequences from N to N+M (inclusive) </br>
- 
-These utilities were designed to work with single long sequences, even though it will with multiple sequences but with the same applying to all sequences. </br>
-     
- ---
-</details>
-
-<details>
-  <summary> report </summary>
-  
-  **-f** print fasta as in the original </br>
-  
-  **-F** print fasta with sequence in one line </br>
-  
-  **-nd** print sequence without define </br>
-  
-  **-d** print short defline before the first space </br>
-  
-  **-D** print the original defline </br>
-  
-  **-c** count the number of fasta entries </br>
-  
-  **-l** print short defline\tlength </br>
-  
-  **-L** print original defline\tlength </br>
-  
-  **-s** report sequence summary statistics including N50 </br>
-  
-  **-S** report sequence summary statistics plus detailed gap info </br>
-  
-  **-rc** print sequence in revevrse compliment </br>
-  
-  **-N** convert all non-ACGT letters to N </br>
-  
-  **-r** remove all non-ACGT letters
-  
-  ---
-</details>
-
-<details>
-  <summary> filter </summary>
-  
- **-g N** ignore sequences with N or more Ns by printing to STDERR. </br>
- 
-**-r 1/2** 1: remove redundant entry based on ID, 2: keep redudant entries by adding 
- a serial number to the identical IDs.</br>
- 
-**-R 1/N** identify and remove identical entries based on sequence by printing redundant entries to STDERR. 
-  1: use complete sequence; N: only the first and last N bases. </br>
- 
-**-l N** print sequences with a minimal length of N bp </br>
-
-**-L N** print sequences with a maximal length of N bp</br>
-
-<p>use -l N -L M for printing sequences with length from N to M bp</p>
-
----
-</details>
-
-Typing 'fatools subcommand' displays the help menu for the subcommand with a list of specific utilities and options.
 
 Making fatools executable and available from any directory
 ------
