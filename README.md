@@ -1,11 +1,9 @@
 # fatools: A utillity package written in python for working with fasta sequences.
 
-A total of XX utilities/options for working with fasta sequences are currently organized under 5 main commands.
-The utilities ranges from searching specific sequence entries from a large set of fasta sequences based on 
+A total of 27 utilities/options for working with fasta sequences are currently organized under 5 main subcommands.
+The utilities range from searching specific sequence entries from a large set of fasta sequences based on 
 ID or a text string in the defline or a sequence motif to spliting a large sequence file into small chuncks, 
-reporting summary stats of a genome assembly and display sequences in reverse complementary. 
-It allows input from and output to stdout, therefore multiple processes can be done via use of pile (|).
-You must use python 2 to run fatools.
+reporting summary stats of a genome assembly, and filtring sequences by length or gap size. Furthermore, by allowing input from and output to stdout, multiple processes can be done sequencially in one line of commpands via use of pipe (|). 
 
 ### List of commands
 <details>
@@ -105,7 +103,7 @@ You must use python 2 to run fatools.
 **-l N** sequence minimal length </br>
 
 **-L N** sequence maximal length </br>
-
+ can use -l N -L M to extract sequences with length from N to M bp
 ---
 </details>
 
