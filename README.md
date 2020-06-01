@@ -109,17 +109,16 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
 ---
 </details>
 
-To explore the different tools under a specific command in the terminal simply type
-`python fatools command` and a list of all the tools available under that command will be displayed.
+Typing 'fatools subcommand' displays the help menu for the subcommand with a list of specific utilities and options.
 
-Make fatools available from any directory
+Making fatools executable and available from any directory
 ------
 #### Linux
 1. Open the terminal and navigate to where you have downloaded fatools
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
 3. Copy this output to the beggining of fatools as `#!/usr/bin/python`.
 4. Run the following command to make the script executable `chmod +x fatools`
-5. Add fatools to your bin directory
+5. Add fatools to your bin directory or anyother directories included in your $PATH
 6. You should be able to run fatools from anywhere!
 
 #### Windows
