@@ -51,8 +51,9 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
    
  **-F N** extract the first N fasta entries </br>
  
- **-B N** extract from the Nth entry to the last entry
-     use '-B N -F M' to extract sequences from N to N+M (inclusive) </br> 
+ **-B N** extract from the Nth entry to the last entry</br>
+ 
+ use '-B N -F M' to extract sequences from N to N+M (inclusive) </br> 
      
  ---
 </details>
