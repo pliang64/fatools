@@ -1,4 +1,5 @@
 # fatools
+
 A python utillity package for working with fasta sequences.
 
 A total of XX utilities/options for working with fasta sequences are organized under yy main commands.
@@ -185,4 +186,4 @@ You can combine multiple utilities using pipe "|". Let's say you want to see the
 AY211956.1Macropus(BRCA1)gene,partialcds       698 
 NP_001245510.1  1262 
 DY343456.1      210
-``` 
+```
