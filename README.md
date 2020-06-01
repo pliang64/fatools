@@ -11,13 +11,13 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
   
   **-s  string:** search for entries containing "string" in the sequence </br>
   
-  **-d  string:** search for entries containing "string" in the defline: Default is for exact match, use "/string" for flexibility </br>     
+  **-d  string:** search for entries containing "string" in the defline: Default is for exact match, use "/string" to search for entries with "string" as part of the ID </br>     
   
   **-F  file:** search for sequences for a list of IDs in the file.
-      Can use -D to specify delimiter, default is space or '|' or end of line. </br>
+      Can use -D to specify delimiter in the defline. Default is space or '|' or end of line. </br>
       use -i to specify the field number, default is 1. </br>
       
-  **-1**  find single match for -d and -s </br>
+  **-1**  find single match for -d and -s. </br>
   
   **-v**  use with -s, -d or -f to negate the search
   
@@ -27,8 +27,8 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
 <details>
   <summary> split </summary> 
   
- **-G N** split the sequences as non-gap framments, N is the number of consecutive Ns, default 1
- Use -G with -t to  print gap positions only, default 0 </br>
+ **-G N** split the sequences as non-gap framments. "N" is the number of consecutive "N/n" base, default value is 1.
+ Use -G with -t to  print gap positions only. -t is deactived in default.  </br>
  
 **-n N** divide into chunks containing N# of sequences </br>
 
@@ -53,7 +53,9 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
  
  **-B N** extract from the Nth entry to the last entry</br>
  
- use '-B N -F M' to extract sequences from N to N+M (inclusive) </br> 
+ use '-B N -F M' to extract sequences from N to N+M (inclusive) </br>
+ 
+These utilities were designed to work with single long sequences, even though it will with multiple sequences but with the same applying to all sequences. </br>
      
  ---
 </details>
@@ -65,7 +67,7 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
   
   **-F** print fasta with sequence in one line </br>
   
-  **-n** print sequence without define </br>
+  **-nd** print sequence without define </br>
   
   **-d** print short defline before the first space </br>
   
@@ -81,11 +83,11 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
   
   **-S** report sequence summary statistics plus detailed gap info </br>
   
-  **-v** take revevrse compliment </br>
+  **-rc** print sequence in revevrse compliment </br>
   
-  **-t** turn all non-ACGT letters to N </br>
+  **-N** convert all non-ACGT letters to N </br>
   
-  **-m** remove all non-ACGT letters
+  **-r** remove all non-ACGT letters
   
   ---
 </details>
@@ -93,19 +95,20 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
 <details>
   <summary> filter </summary>
   
- **-g N** ignore sequences with N or more Ns (print to STDERR) </br>
+ **-g N** ignore sequences with N or more Ns by printing to STDERR. </br>
  
-**-r 1/2 1:** remove redundant entry based on ID, 2: keep redudant entries by adding 
- a a number to the identical IDs) </br>
+**-r 1/2** 1: remove redundant entry based on ID, 2: keep redudant entries by adding 
+ a serial number to the identical IDs.</br>
  
-**-R 1/N** identify and remove identical entries (redudant entries in STDERR and NR entries on STDOUT) 
- by sequences based on 1: complete sequence; N: only the first and last N bases </br>
+**-R 1/N** identify and remove identical entries based on sequence by printing redundant entries to STDERR. 
+  1: use complete sequence; N: only the first and last N bases. </br>
  
-**-l N** sequence minimal length </br>
+**-l N** print sequences with a minimal length of N bp </br>
 
-**-L N** sequence maximal length</br>
+**-L N** print sequences with a maximal length of N bp</br>
 
-<p>use -l N -L M to extract sequences with length from N to M bp</p>
+<p>use -l N -L M for printing sequences with length from N to M bp</p>
+
 ---
 </details>
 
