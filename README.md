@@ -104,8 +104,8 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
 **-l N** sequence minimal length </br>
 
 **-L N** sequence maximal length</br>
-     <p>can use -l N -L M to extract sequences with length from N to M bp</p>
 
+<p>use -l N -L M to extract sequences with length from N to M bp</p>
 ---
 </details>
 
@@ -168,7 +168,7 @@ To get fasta sequences with a specific maximum length filter
 DY343456.1
 CAAACAGCCTGGCTTAGCAAAAAACCAACAGAGCAGTCTGGATGAAAGTAAGGAAATATGTAGTGCTGGA
 TGTGGCACAGATGCTCGTGCCACCTCATTACTTCCTGAAACCACCAGCTTATCGCCCAACACAGACCGAA
-TGAATGTAGAAAAGGCTGAACTCTGTAATAAAAGTAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCA </code>
+TGAATGTAGAAAAGGCTGAACTCTGTAATAAAAGTAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCA
 
 FY343456.1
 TGTGGCACAGATGCTCGTGCCACCTCATTACTTCCTGAAACCACCAGCTTATCGCCCAACACAGACCGAA
@@ -178,10 +178,14 @@ TCTGGATGAAAGTAAGGAAATATGTAGTGCTGGAAAGACCCTGGGTGCCCATGAGCTGAATGCCCATCAT
 
 You can combine multiple utilities using pipe "|". Let's say you want to see the short defline and the length of the first 3 fasta sequences in a fasta file.
 
-`fatools extract -F3 sequenceTesting2.txt  | fatools report -l -`
+fatools extract -F3 sequenceTesting2.txt  | fatools report -l -
 
 ```
 AY211956.1Macropus(BRCA1)gene,partialcds       698 
 NP_001245510.1  1262 
 DY343456.1      210
 ``` 
+
+Or extract the sequences from a large sequence set for a list of IDs and then search sequences with a specific sequence by using
+
+fatools search -F IDlist.txt exampleFasta.fa |fatools -S AAATAAA -
