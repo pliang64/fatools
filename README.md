@@ -1,6 +1,6 @@
-# fatools: A utillity package written in python for working with fasta sequences.
+#<b>fatools: A utillity package written in python for working with fasta sequences</b>.
 
-A total of 27 utilities/options for working with fasta sequences are currently organized under 5 main subcommands.
+A total of 30 utilities/options for working with fasta sequences are currently organized under 6 main subcommands.
 The utilities range from searching specific sequence entries from a large set of fasta sequences based on 
 ID or a text string in the defline or a sequence motif to spliting a large sequence file into small chuncks, 
 reporting summary stats of a genome assembly, and filtring sequences by length or gap size. Furthermore, by allowing input from and output to stdout, multiple processes can be done sequencially in one line of commpands via use of pipe (|). 
@@ -12,30 +12,31 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 <details>
   <summary> convert </summary>
   
-  **-r** print sequence in revevrse compliment </br>
+  **-r** print sequence in revevrse compliment. </br>
   
-  **-N** convert all non-ACGT letters to N </br>
+  **-N** convert all non-ACGT letters to N.</br>
   
-  **-r** remove all non-ACGT letters
+  **-R** remove all non-ACGT letters.
   
   ---
 </details>
 
 <details>
   <summary> extract </summary>
-  
-**-I N** extract sequence from N bp to the end (1-based), works with a single fasta entry. </br>
 
-**-E N** extract sequence up to to N bp (1-based), works with a single fasta entry
-   use '-I N -E M' to extract sequence from 'N to N+M' bp (inclusive) </br>
+ **-F N** extract the first N fasta entries. </br>
+ 
+ **-B N** extract from the Nth entry to the last entry.</br>
+ 
+ use '-B N -F M' to extract sequences from N to M enries (inclusive). </br>
+ 
+**-I N** extract sequence from N bp to the end (1-based). </br>
+
+**-E N** extract sequence up to to N bp (1-based).</br>
+
+use '-I N -E M' to extract sequence from 'N to M' bp (inclusive). </br>
    
- **-F N** extract the first N fasta entries </br>
- 
- **-B N** extract from the Nth entry to the last entry</br>
- 
- use '-B N -F M' to extract sequences from N to N+M (inclusive) </br>
- 
-These utilities were designed to work with single long sequences, even though it will with multiple sequences but with the same applying to all sequences. </br>
+Note: The -I and -E options were designed for working with a single long sequences, even though they will work for multiple sequences by applying the same operation to all sequences. </br>
      
  ---
 </details>
@@ -43,19 +44,19 @@ These utilities were designed to work with single long sequences, even though it
 <details>
   <summary> filter </summary>
   
- **-g N** ignore sequences with N or more Ns by printing to STDERR. </br>
+ **-g N** skip sequences with N or more Ns by printing to STDERR. </br>
  
-**-r 1/2** 1: remove redundant entry based on ID, 2: keep redudant entries by adding 
- a serial number to the identical IDs.</br>
+**-r 1/2** 1: skip redundant entry based ID by printing to STDERR; 2: keep redudant entries by adding 
+ a serial number to the identical IDs to make each ID unique.</br>
  
-**-R 1/N** identify and remove identical entries based on sequence by printing redundant entries to STDERR. 
-  1: use complete sequence; N: only the first and last N bases. </br>
+**-R 1/N** skip redundant entries based on sequence by printing to STDERR. 
+  1: use the entire sequence; N: use only the first and last N bases. </br>
  
-**-l N** print sequences with a minimal length of N bp </br>
+**-l N** skip sequences shorter than N bp. </br>
 
-**-L N** print sequences with a maximal length of N bp</br>
+**-L N** skip sequences longer than N bp.</br>
 
-<p>use -l N -L M for printing sequences with length from N to M bp</p>
+use -l N -L M for sequences with length from N to M bp (inclusive).</br>
 
 ---
 </details>
@@ -63,25 +64,25 @@ These utilities were designed to work with single long sequences, even though it
 <details>
   <summary> report </summary>
   
-  **-f** print fasta as in the original </br>
+  **-f** print fasta entries as in the input. </br>
   
-  **-F** print fasta with sequence in one line </br>
+  **-F** print fasta entries with all sequence in one line. </br>
   
-  **-n** print sequence without define </br>
+  **-n** print sequences without the define. </br>
   
-  **-d** print short defline before the first space </br>
+  **-d** print deflines in short form (part before the first space). </br>
   
-  **-D** print the original defline </br>
+  **-D** print deflines in the original form. </br>
   
-  **-c** print the number of fasta entries </br>
+  **-c** print the total number of fasta entries in the input. </br>
   
-  **-l** print short defline\tlength </br>
+  **-l** print short defline +[\t] length. </br>
   
-  **-L** print original defline\tlength </br>
+  **-L** print original defline +[\t] length. </br>
   
-  **-s** print sequence summary statistics including N50 </br>
+  **-s** print sequence summary statistics including N50. </br>
   
-  **-S** print sequence summary statistics plus detailed gap info </br>
+  **-S** print sequence summary statistics plus detailed gap info. </br>
   
   ---
 </details>
@@ -89,17 +90,17 @@ These utilities were designed to work with single long sequences, even though it
 <details>
   <summary> search </summary>
   
-  **-s  string:** search for entries containing "string" in the sequence </br>
+  **-s  string:** search for entries containing "string" in the sequence. </br>
   
-  **-d  string:** search for entries containing "string" in the defline: Default is for exact match, use "/string" to search for entries with "string" as part of the ID </br>     
+  **-d  string:** search for entries containing "string" in the defline: Default is for exact match; use "/string" to search for entries with "string" as part of the ID. </br>     
   
-  **-F  file:** search for sequences for a list of IDs in the file.
-      Can use -D to specify delimiter in the defline. Default is space or '|' or end of line. </br>
+  **-F  file:** search for sequences based on a list of IDs in the file (one ID/line).</br>
+      Can use -D to specify delimiter in the defline. Default is space or '|' or end of line; </br>
       use -i to specify the field number, default is 1. </br>
       
-  **-1**  find single match for -d and -s. </br>
+  **-1**  print only the 1st match for -d and -s. </br>
   
-  **-v**  use with -s, -d or -f to negate the search
+  **-v**  use with -s, -d or -f to negate the search.</br>
   
   ---
 </details>
@@ -107,21 +108,23 @@ These utilities were designed to work with single long sequences, even though it
 <details>
   <summary> split </summary> 
   
- **-G N** split the sequences as non-gap framments. "N" is the number of consecutive "N/n" base, default value is 1.
- Use -G with -t to  print gap positions only. -t is deactived in default.  </br>
+ **-G N** split each of the sequences in the input file as non-gap fragments. </br> 
+ "N" is the number of consecutive "N/n" base, default value is 1; </br>
+ Use -G N with -t to  print just the gap positions.  </br>
  
-**-n N** divide into chunks containing N# of sequences </br>
+**-n N** split the input sequences into chunks, each containing N fasta entries (the last chunk may be less). </br>
 
-**-N N** divide sequences into N chunks </br>
+**-N N** split the input sequences into N chunks, each containing equal number of entries (last one may be smaller). </br>
 
-**-M N** divide sequences into chunks ~N MB (million bp) in size </br>
+**-M N** split the input sequences into chunks at ~N MB (million bp) in size (last chunk may be smaller). </br>
 
-**-o file:** output file\n
+**-o file:** prefix for output files (serial numbers added to prefix; required).\n
 
 ---
 </details>
 
-Making fatools executable and available from any directory
+
+<p><h2>Making fatools executable and available from any directory</h2>
 ------
 #### Linux
 1. Open the terminal and navigate to where you have downloaded fatools
@@ -140,7 +143,7 @@ Making fatools executable and available from any directory
 
 
 
-Examples
+<p><h2>Examples</h2>
 ------
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
 
