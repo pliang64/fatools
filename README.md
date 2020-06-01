@@ -103,8 +103,9 @@ reporting summary stats of a genome assembly, and filtring sequences by length o
  
 **-l N** sequence minimal length </br>
 
-**-L N** sequence maximal length </br>
- can use -l N -L M to extract sequences with length from N to M bp
+**-L N** sequence maximal length</br>
+     <p>can use -l N -L M to extract sequences with length from N to M bp</p>
+
 ---
 </details>
 
