@@ -124,7 +124,7 @@ use -l N -L M for sequences with length from N to M bp (inclusive).</br>
 </details>
 
 
-<p><h2>Making fatools executable and available from any directory</h2>
+<h2>Making fatools executable and available from any directory</h2>
 ------
 #### Linux
 1. Open the terminal and navigate to where you have downloaded fatools
