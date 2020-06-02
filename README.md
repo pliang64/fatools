@@ -1,9 +1,9 @@
 <h2>fatools: A utillity package written in python for working with fasta sequences</h2>.
 
-A total of 30 utilities/options for working with fasta sequences are currently organized under 6 main subcommands.
+A total of 30 utilities/options for common operarations with fasta sequences are currently organized under 6 main subcommands.
 The utilities range from searching specific sequence entries from a large set of fasta sequences based on 
 ID or a text string in the defline or a sequence motif to spliting a large sequence file into small chuncks, 
-reporting summary stats of a genome assembly, and filtring sequences by length or gap size. Furthermore, by allowing input from and output to stdout, multiple processes can be done sequencially in one line of commpands via use of pipe (|). 
+reporting summary stats of a genome assembly, and filtering sequences by length or gap size or redundant entries based on ID or sequences. Furthermore, by allowing input from and output to stdout, multiple processes can be done sequencially in one line of commpands via use of pipe (|). 
 
 ### List of subcommands
 
@@ -126,6 +126,7 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
 
 <p><h2>Making fatools executable and available from any directory</h2>
 ------
+
 #### Linux
 1. Open the terminal and navigate to where you have downloaded fatools
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
