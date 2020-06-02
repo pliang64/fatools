@@ -44,7 +44,7 @@ Note: The -I and -E options were designed for working with a single long sequenc
 <details>
   <summary> filter </summary>
   
- **-g N** skip sequences with N or more Ns by printing to STDERR. </br>
+**-g N** skip sequences with N or more Ns by printing to STDERR. </br>
  
 **-r 1/2** 1: skip redundant entry based ID by printing to STDERR; 2: keep redudant entries by adding 
  a serial number to the identical IDs to make each ID unique.</br>
@@ -54,9 +54,10 @@ Note: The -I and -E options were designed for working with a single long sequenc
  
 **-l N** skip sequences shorter than N bp. </br>
 
-**-L N** skip sequences longer than N bp.</br>
-
+**-L N** skip sequences longer than N bp.
 use -l N -L M for sequences with length from N to M bp (inclusive).</br>
+
+In all options, '-e' can be added to print the skipped entries in STDERR, which can be captured using 2>[skipped.fa].</br>
 
 ---
 </details>
@@ -125,7 +126,7 @@ use -l N -L M for sequences with length from N to M bp (inclusive).</br>
 
 <p><h2>Making fatools executable and available from any directory</h2>
 ------
-####Linux
+#### Linux
 1. Open the terminal and navigate to where you have downloaded fatools
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
 3. Copy this output to the beggining of fatools as `#!/usr/bin/python`.
