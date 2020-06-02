@@ -16,7 +16,12 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
   
   **-N** convert all non-ACGT letters to N.</br>
   
-  **-R** remove all non-ACGT letters.
+  **-R** remove all non-ACGT letters.</br>
+
+  **-U** to upper case </br>
+
+  **-u** to lower case
+	
   
   ---
 </details>
@@ -46,7 +51,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
   
  **-g N** skip sequences with N or more Ns by printing to STDERR. </br>
  
- **-r 1/2** 1: skip redundant entry based ID by printing to STDERR; 2: keep redudant entries by adding 
+ **-r 1/2** 1: skip redundant entry based ID by printing to STDERR; 2: keep redundant entries by adding 
   a serial number to the identical IDs to make each ID unique.</br>
  
  **-R 1/N** skip redundant entries based on sequence by printing to STDERR. 
@@ -118,7 +123,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 
  **-M N** split the input sequences into chunks at ~N MB (million bp) in size (last chunk may be smaller). </br>
 
- **-o file:** prefix for output files (serial numbers added to prefix; required).\n
+ **-o file:** prefix for output files (serial numbers added to prefix; required).
 
 ---
 </details>
@@ -130,7 +135,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 2. Find where python2 is installed in your system `which python`. Usually you would get something like /usr/bin/python
 3. Copy this output to the beggining of fatools as `#!/usr/bin/python`.
 4. Run the following command to make the script executable `chmod +x fatools`
-5. Add fatools to your bin directory or anyother directories included in your $PATH
+5. Add fatools to your bin directory or any other directories included in your $PATH
 6. You should be able to run fatools from anywhere!
 
 #### Windows
@@ -146,7 +151,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 Navigate to the exampleFiles directory in this repository. In there, a fasta file (exampleFasta.fa) and a file containing a list of IDs (IDlist.txt) from exampleFasta.fa.
 
 To extract the fasta sequences from exampleFasta.fasta based on the list of IDs:</br>
-'fatools search -F IDlist.txt exampleFasta.fa' </br>
+`fatools search -F IDlist.txt exampleFasta.fa` </br>
 
 ```
 NP_001245510.1 notch, isoform B [Drosophila melanogaster]
