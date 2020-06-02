@@ -49,12 +49,12 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 <details>
   <summary> filter </summary>
   
- **-g N** skip sequences with N or more Ns by printing to STDERR. </br>
+ **-g N** skip sequences with N or more Ns. </br>
  
- **-r 1/2** 1: skip redundant entry based ID by printing to STDERR; 2: keep redundant entries by adding 
+ **-r 1/2** 1: skip redundant entry based ID; 2: keep redundant entries by adding 
   a serial number to the identical IDs to make each ID unique.</br>
  
- **-R 1/N** skip redundant entries based on sequence by printing to STDERR. 
+ **-R 1/N** skip redundant entries based on sequence. 
   1: use the entire sequence; N: use only the first and last N bases. </br>
  
  **-l N** skip sequences shorter than N bp. </br>
@@ -62,6 +62,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
  **-L N** skip sequences longer than N bp.</br>
 
  use -l N -L M for sequences with length from N to M bp (inclusive).</br>
+In all options, '-e' can be added to print the skipped entries in STDERR, which can be captured using 2>[skipped.fa].
 
 ---
 </details>
