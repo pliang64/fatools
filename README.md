@@ -62,6 +62,7 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
  **-L N** skip sequences longer than N bp.</br>
 
  use -l N -L M for sequences with length from N to M bp (inclusive).</br>
+
 In all options, '-e' can be added to print the skipped entries in STDERR, which can be captured using 2>[skipped.fa].
 
 ---
