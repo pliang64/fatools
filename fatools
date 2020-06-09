@@ -48,7 +48,7 @@ def get_options(command):
             Can use -D to specify delimiter in the defline. Default is space, '|' or end of line. 
             use -i to specify the field number, default is 1.
         -1  print only the 1st match for -d and -s.
-        -v  use with -s, -d or -f to negate the search\n
+        -v  use with -s, -d or -F to negate the search\n
          """)
     elif command == 'split':
         print("\nUsage: " + sys.argv[0] + """ split [options] inputfasta | - (stdin)  
@@ -63,15 +63,21 @@ def get_options(command):
     elif command == 'extract':
         print("\nUsage: " + sys.argv[0] + """ extract [options] inputfasta | - (stdin)
         extract options:
-        -F N extract the first N fasta entries.
-        -B N extract from the Nth entry to the last entry.
-           Use '-B N -F M' to extract sequences from N to M (inclusive)
-        -I N extract sequence from N bp to the end (1-based)
-        -E N extract sequence up to to N bp (1-based)
-            Use '-I N -E M' to extract sequence from 'N to M' bp (inclusive)
+        -F N extract the first N fasta entries, if N is larger than the total number of entries, 
+            then print to the last entries.
+        -S N extract from the Nth entry to the last entry.
+        -L N extract last N sequence entries. If N is larger than the total number of entries, then print all entries.
+           
+        Use -S N -F M for entries from N to M; use -F N and -L N to extract both the first and last N entries.
+           
+        -f N extract first N bp, prints the entire sequence if N is larger than the total length.
+        -s N extract from N bp to the end.
+        -l N extract last N bp, prints the entire sequence if N is larger than the total length.
+            Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
+            one sequence separated by a space.
             
-        Note: The -I and -E options were designed for working with a single long sequences, even though they will 
-        work for multiple sequences by applying the same operation to all sequences.\n
+        Note: The -f, -s, and -l options were designed for working with a single long sequences, even though they will 
+              work for multiple sequences by applying the same operation to all sequences\n
         """)
     elif command == 'report':
         print("\nUsage: " + sys.argv[0] + """ report [options] inputfasta | - (stdin)
@@ -116,7 +122,10 @@ justCommands = "\nUsage: " + sys.argv[0] + """ command option(s) inputfasta | - 
     """
 
 try:
-    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:tvfthUuec1')
+    # if sys.argv[1] == 'extract':
+    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:f:tvthUuec1')
+    # else:
+    #     opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:tvfthUuec1')
 except:
     print(justCommands)
     sys.exit()
@@ -222,7 +231,6 @@ def ignoren(sequence):
             match_g = re.search(r'[Nn]{' + a + ',}', sequence)
     if optg:
         if match_g:
-            print >> sys.stderr, fasta  # , file = sys.stderr)
             s = True
     else:
         get_options(sys.argv[1])
@@ -230,24 +238,39 @@ def ignoren(sequence):
     return s
 
 
-def extractFromSeq(I, Ia, E, Ea, seq_len, seq_old, defn_old, rvrs):
+def extractFromSeq(extract_fromN, extract_fromN_arg, extract_firstN,
+                   extract_firstN_arg, extract_lastN, extract_lastN_arg, seq_len, seq_old, defn_old):
     """Extracts the specified number of base pairs in a sequence"""
-    if I and E:
-        if int(Ia) > int(Ea):
-            print("Error: Argument for -I can't be greater than argument for -E")
-            sys.exit()
-        seq = seq_old[int(Ia) - 1:int(Ea)]
-        defn = defn_old + ':' + Ia + ':' + Ea
-    elif I:
-        seq = seq_old[int(Ia) - 1:]
-        defn = defn_old + ':' + Ia + ':' + str(seq_len)
-    elif E:
-        seq = seq_old[:int(Ea)]
-        defn = defn_old + ':1' + ':' + Ea
+    if extract_lastN and extract_firstN:
+        if (int(extract_firstN_arg) + int(extract_lastN_arg)) > seq_len:
+            seq = seq_old
+            defn = defn_old
+        else:
+            seq = seq_old[:int(extract_firstN_arg)] + " " + seq_old[-int(extract_lastN_arg):]
+            defn = defn_old + ":" + str(extract_firstN_arg) + "/" + str(seq_len - extract_lastN_arg) + ':' + str(seq_len)
 
-    if I or E:
-        if rvrs:  # reverse compliment
-            seq = reversecom(seq)
+    elif extract_lastN:
+        seq = seq_old[-int(extract_lastN_arg):]
+        defn = defn_old + ':' + str(seq_len - extract_lastN_arg) + ':' + str(seq_len)
+
+    elif extract_fromN and extract_firstN:
+        if int(extract_fromN_arg) > int(extract_firstN_arg):
+            print("Error: Argument for -s can't be greater than argument for -f")
+            sys.exit()
+        seq = seq_old[int(extract_fromN_arg) - 1:int(extract_firstN_arg)]
+        defn = defn_old + ':' + extract_fromN_arg + ':' + extract_firstN_arg
+
+    elif extract_fromN:
+        seq = seq_old[int(extract_fromN_arg) - 1:]
+        defn = defn_old + ':' + extract_fromN_arg + ':' + str(seq_len)
+        if int(extract_fromN_arg) > seq_len:
+            sys.stderr.write("N larger than the total length.\n")
+
+    elif extract_firstN:
+        seq = seq_old[:int(extract_firstN_arg)]
+        defn = defn_old + ':1' + ':' + extract_firstN_arg
+
+    if extract_fromN or extract_firstN or extract_lastN:
         print(defn + '\n' + seq)
 
 
@@ -423,56 +446,79 @@ def fatools(record, lastEntry):
                 print("{}\n{}".format(defn, seqf))
             return
     elif sys.argv[1] == 'extract':
-        optf = False
-        optb = False
+        first_Nseq = False
+        first_Nseq_arg = 0
+        last_Nseq = False
+        last_Nseq_arg = 0
+        N_to_last = False
         next = False
-        rvrs = False
         for o, a in opts:
-            if o == '-r':
-                rvrs = True
             if o == '-t':
                 seqf = acgtton(seqf)
+
+            if o == '-L':
+                last_Nseq = True
+                last_Nseq_arg = int(a)
+                fa_list.append(fasta)
+
             if o == '-F':  # extract the first N sequence entries
-                optf = True
+                first_Nseq = True
+                first_Nseq_arg = int(a)
                 if cnt + 1 > int(a):
                     brk = True
                     next = True
-                    break
-            elif o == '-B':  # extract from the Nth entry to the last
-                optb = True
+            elif o == '-S':  # extract from the Nth entry to the last
+                N_to_last = True
+                if lastEntry:
+                    if int(a) > cnt+1:
+                        sys.stderr.write("N larger than the total number of entries.\n")
                 if cnt + 1 < int(a):
                     next = True
                     break
 
-        I = False  # sequence part ###
-        E = False
-        # optI = False
-        # optE = False
-        optg = False
-        Ia, Ea = '', ''
+        fromNbps = False  # sequence part ###
+        firstNbps = False
+        lastNbps = False
+        lastNbps_arg = 0
+        fromNbps_arg, firstNbps_arg = '', ''
         for o, a in opts:
-            # extract sequence from N position, 1 based
-            if o == '-I':
-                I = True
-                Ia = a
             # extract sequence up to to N position, 1 based
-            if o == '-E':
-                E = True
-                Ea = a
+            if o == '-f':
+                firstNbps = True
+                firstNbps_arg = a
+            # extract sequence from N position, 1 based
+            if o == '-s':
+                fromNbps = True
+                fromNbps_arg = a
+            if o == '-l':
+                lastNbps = True
+                lastNbps_arg = int(a)
 
-        if optf or optb:
-            # reverse compliment
-            if rvrs:
-                seqf = reversecom(seqf)
+        # dont break if we also want to extract the last N sequences
+        if last_Nseq and first_Nseq:
+            brk = False
+
+        if last_Nseq and lastEntry:
+            if first_Nseq and (first_Nseq_arg + last_Nseq_arg) > cnt + 1:
+                i = first_Nseq_arg
+            elif last_Nseq_arg > cnt + 1:
+                i = 0
+            else:
+                i = cnt + 1 - last_Nseq_arg
+            while i < cnt + 1:
+                print(fa_list[i])
+                i += 1
+
+        if first_Nseq or N_to_last:
             if next:
-                return  # continue
-            elif I or E:
+                return
+            elif fromNbps or firstNbps or lastNbps:
                 pass
             else:
                 print(defn + '\n' + seqf + '\n')
-        extractFromSeq(I, Ia, E, Ea, seq_len, seq_old, defn_old, rvrs)
+        extractFromSeq(fromNbps, fromNbps_arg, firstNbps, firstNbps_arg, lastNbps, lastNbps_arg, seq_len, seq_old, defn_old)
 
-        if not optf and not optb and not I and not E:
+        if not first_Nseq and not N_to_last and not last_Nseq and not fromNbps and not firstNbps and not lastNbps:
             get_options(sys.argv[1])
             sys.exit()
 
@@ -708,10 +754,9 @@ def fatools(record, lastEntry):
                 if o == '-S':
                     non_gap = tlen - gapTotal
                     print(
-                        'Gap info: {} sequences with gaps for a total of {} estimated bps; non-gap: {} bps; gap size: <11bp: {}; <101bp: {}; 500bp: {}; <1kp: {}; >1kp: {}.'.format(
+                        'Gap info: {} sequences with gaps for a total of {} estimated bps; non-gap: {} bps; gap size: <11bp: {}; <101bp: {}; <500bp: {}; <1kp: {}; >1kp: {}.'.format(
                             gapseq, format(gapTotal, ",d"), format(non_gap, ",d"), gap10, gap100, gap500, gap1k, gap10k))
                     break
-
 
 def searchByID(entry, IDset, search_negate):
     """Searches for entries based on a list of IDs"""
