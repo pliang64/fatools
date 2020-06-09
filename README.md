@@ -31,17 +31,23 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 
  **-F N** extract the first N fasta entries. </br>
  
- **-B N** extract from the Nth entry to the last entry.</br>
- 
- use '-B N -F M' to extract sequences from N to M enries (inclusive). </br>
- 
- **-I N** extract sequence from N bp to the end (1-based). </br>
+ **-S N** extract from the Nth entry to the last entry.</br>
 
- **-E N** extract sequence up to to N bp (1-based).</br>
+ **-L N** extract last N sequence entries.</br>
+ 
+ Use -S N -F M for entries from N to M; use -F N and -L N to extract both the first and last N entries. </br>
+ 
+ **-f N** extract sequence from N bp to the end (1-based). </br>
 
- use '-I N -E M' to extract sequence from 'N to M' bp (inclusive). </br>
+ **-s N** extract sequence up to to N bp (1-based).</br>
+
+ **-l N** extract last N bp. </br>
+
+ Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
+            one sequence separated by a space. </br>
    
- Note: The -I and -E options were designed for working with a single long sequences, even though they will work for multiple sequences by applying the same operation to all sequences. </br>
+ Note: The -f, -s, and -l options were designed for working with a single long sequences, even though they will 
+              work for multiple sequences by applying the same operation to all sequences. </br>
      
  ---
 </details>
@@ -107,7 +113,7 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
       
   **-1**  print only the 1st match for -d and -s. </br>
   
-  **-v**  use with -s, -d or -f to negate the search.</br>
+  **-v**  use with -s, -d or -F to negate the search.</br>
   
   ---
 </details>
