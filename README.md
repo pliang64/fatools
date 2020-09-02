@@ -29,19 +29,20 @@ Typing 'fatools ' displays the list of subcomands; typing 'fatools <subcommand>'
 <details>
   <summary> extract </summary>
 
- **-F N** extract the first N fasta entries. </br>
+ **-F N** extract the first N fasta entries, if N is larger than the total number of entries, 
+            then print to the last entries. </br>
  
  **-S N** extract from the Nth entry to the last entry.</br>
 
- **-L N** extract last N sequence entries.</br>
+ **-L N** extract last N sequence entries. If N is larger than the total number of entries, then print all entries.</br>
  
  Use -S N -F M for entries from N to M; use -F N and -L N to extract both the first and last N entries. </br>
  
- **-f N** extract sequence from N bp to the end (1-based). </br>
+ **-f N** extract first N bp, prints the entire sequence if N is larger than the total length. </br>
 
- **-s N** extract sequence up to to N bp (1-based).</br>
+ **-s N** extract sequence up to to N bp.</br>
 
- **-l N** extract last N bp. </br>
+ **-l N** extract last N bp, prints the entire sequence if N is larger than the total length. </br>
 
  Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
             one sequence separated by a space. </br>
@@ -81,7 +82,7 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
   
   **-F** print fasta entries with all sequence in one line. </br>
   
-  **-n** print sequences without the define. </br>
+  **-n** print sequences without the defline. </br>
   
   **-d** print deflines in short form (part before the first space). </br>
   
@@ -96,6 +97,9 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
   **-s** print sequence summary statistics including N50. </br>
   
   **-S** print sequence summary statistics plus detailed gap info. </br>
+
+	    Use -h with -s and -S to disable the header above the outputs </br>
+            Use -H to print parameters in human friendly form. </br>
   
   ---
 </details>
@@ -122,7 +126,7 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
   <summary> split </summary> 
   
  **-G N** split each of the sequences in the input file as non-gap fragments. </br> 
- "N" is the number of consecutive "N/n" base, default value is 1; </br>
+ "N" is the number of consecutive Ns base, default is 1; </br>
  Use -G N with -t to  print just the gap positions.  </br>
  
  **-n N** split the input sequences into chunks, each containing N fasta entries (the last chunk may be less). </br>
