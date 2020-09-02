@@ -97,9 +97,8 @@ In all options, '-e' can be added to print the skipped entries in STDERR, which 
   **-s** print sequence summary statistics including N50. </br>
   
   **-S** print sequence summary statistics plus detailed gap info. </br>
-
-	    Use -h with -s and -S to disable the header above the outputs </br>
-            Use -H to print parameters in human friendly form. </br>
+    Use -h with -s and -S to disable the header above the outputs </br>
+    Use -H to print parameters in human friendly form.
   
   ---
 </details>
