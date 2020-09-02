@@ -1,6 +1,7 @@
 # Rodrigo Vega 2020
 # adapted from Ping Liang's perl version of the fatools 2019
 import getopt
+import os
 import sys
 import re
 # import only necessary when running with python 2.7 or lower
@@ -14,8 +15,7 @@ brk = False
 # for usage in chunk command
 fa_list = []
 tlen, seqnum, gap10, gap100, gap500, gap1k, gap10k, gapTotal, gapseq, field, redntID, gapPattern = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-delimeter, argSs, optN_n_M, opt1 = False, False, False, False
-
+delimeter, argSs, optN_n_M, opt1, overwrite_files = False, False, False, False, False
 
 id_del_set = set()
 IDlen = 0
@@ -58,7 +58,7 @@ def get_options(command):
         -n N plit the input sequences into chunks, each containing N fasta entries (the last chunk may be less). 
         -N split the input sequences into N chunks, each containing equal number of entries (last one may be smaller).
         -M split the input sequences into chunks at ~N MB (million bp) in size (last chunk may be smaller).
-        -o "prefix for output files (serial numbers added to prefix; required).\n
+        -o "prefix" for output files (serial numbers added to prefix; required).\n
         """)
     elif command == 'extract':
         print("\nUsage: " + sys.argv[0] + """ extract [options] inputfasta | - (stdin)
@@ -67,15 +67,15 @@ def get_options(command):
             then print to the last entries.
         -S N extract from the Nth entry to the last entry.
         -L N extract last N sequence entries. If N is larger than the total number of entries, then print all entries.
-           
+
         Use -S N -F M for entries from N to M; use -F N and -L N to extract both the first and last N entries.
-           
+
         -f N extract first N bp, prints the entire sequence if N is larger than the total length.
         -s N extract from N bp to the end.
         -l N extract last N bp, prints the entire sequence if N is larger than the total length.
             Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
             one sequence separated by a space.
-            
+
         Note: The -f, -s, and -l options were designed for working with a single long sequences, even though they will 
               work for multiple sequences by applying the same operation to all sequences\n
         """)
@@ -91,7 +91,9 @@ def get_options(command):
         -l print short defline +[\\t] length.
         -L print original defline +[\\t] length.
         -s print sequence summary statistics including N50.
-        -S print sequence summary statistics plus detailed gap info.\n
+        -S print sequence summary statistics plus detailed gap info.
+            Use -h with -s and -S to disable the header above the outputs
+            Use -H to print parameters in human friendly form.  \n
         """)
     elif command == 'filter':
         print("\nUsage: " + sys.argv[0] + """ filter [options] inputfasta | - (stdin)
@@ -122,10 +124,7 @@ justCommands = "\nUsage: " + sys.argv[0] + """ command option(s) inputfasta | - 
     """
 
 try:
-    # if sys.argv[1] == 'extract':
-    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:f:tvthUuec1')
-    # else:
-    #     opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:tvfthUuec1')
+    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:f:tvthUuecH1')
 except:
     print(justCommands)
     sys.exit()
@@ -147,52 +146,54 @@ except:
     get_options(sys.argv[1])
     sys.exit(2)
 
+
 def read_file_bytes(file, option):
     """ Reads a file in bytes that containing entries and sends an individual entry to
     readFile().
     """
     last_seq_chunk = ''
-    parent_of_orphan_chunk = ''
-    data = file.read(50000000)
-    bytes_read = len(data)
-    bytes_tobe_read = 50000000
-    sequences = ''
-    fasta = ''
-    seq = ''
+    split_delim = '\n>'
+    data = file.read(50000000)  # 50000000
+    # print(data)
+    # print('----------------------------------------------------')
     while data:
-        sequences = data.split('\n>')
+        sequences = data.split(split_delim)
+        last_byte_read = data[-1]
+        if last_byte_read == '\n':
+            split_delim = '>'
+            last_byte_read = ''
+        else:
+            split_delim = '\n>'
+        # print(sequences)
         generator = (fasta for fasta in sequences)
         first_chunk = True
         for fasta in generator:
             last_seq_chunk = readFile(fasta, sequences, last_seq_chunk, first_chunk, False, option)
-            # we want to keep the parent of a chunk that might end up being read in different chunks
-            if bytes_tobe_read <= bytes_read:
-                parent_of_orphan_chunk = last_seq_chunk
-            seq = fasta
             first_chunk = False
         data = file.read(50000000)
-        bytes_read = bytes_read + len(data)
-        bytes_tobe_read = bytes_tobe_read + 50000000
+        # print(data)
+        # print('----------------------------------------------------')
 
-    if len(sequences) == 1:
-        last_seq_chunk = parent_of_orphan_chunk
-    if last_seq_chunk != '' or (not last_seq_chunk.isspace()):
-        sequences = [None]
-        if last_seq_chunk == fasta:
-            last_seq_chunk = ''
-        readFile(seq, sequences, last_seq_chunk, True, True, option)
+    sequences = [None]
+    readFile(last_seq_chunk, sequences, '', False, True, option)
 
 
 def readFile(seq, sequences, last_seq_chunk, first_chunk, is_last_seq, option):
     """Makes sure the entries read in bytes are put together correctly"""
-    # if last sequence in chunk
-    if seq == sequences[-1]:
-        last_seq_chunk = seq
-        return last_seq_chunk
+    seq_copy = seq
     if first_chunk:
         if last_seq_chunk != '' or (not last_seq_chunk.isspace()):
             seq = "{}{}".format(last_seq_chunk, seq)
+    # if last sequence in chunk
+    if seq_copy == sequences[-1] and seq_copy != '':
+        last_seq_chunk = seq
+        return last_seq_chunk
+    if seq == '':
+        return ''
 
+    # print('\n||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||')
+    # print(seq)
+    # print('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n')
     last_seq_chunk = ''
     if option[0] == 1:
         fatools(seq, is_last_seq)
@@ -208,7 +209,7 @@ def reversecom(sequence):
     sequence = sequence.translate(translation)
     # reverse the sequence
     sequence = sequence[::-1]
-    return (sequence)
+    return sequence
 
 
 def acgtton(sequence):
@@ -247,7 +248,8 @@ def extractFromSeq(extract_fromN, extract_fromN_arg, extract_firstN,
             defn = defn_old
         else:
             seq = seq_old[:int(extract_firstN_arg)] + " " + seq_old[-int(extract_lastN_arg):]
-            defn = defn_old + ":" + str(extract_firstN_arg) + "/" + str(seq_len - extract_lastN_arg) + ':' + str(seq_len)
+            defn = defn_old + ":" + str(extract_firstN_arg) + "/" + str(seq_len - extract_lastN_arg) + ':' + str(
+                seq_len)
 
     elif extract_lastN:
         seq = seq_old[-int(extract_lastN_arg):]
@@ -292,7 +294,7 @@ def countGaps(gap):
 
 def fatools(record, lastEntry):
     """Tools to manipulate FASTA sequences"""
-    global brk, redntID, tlen, seqnum, optN_n_M, argSs, cnt, gapTotal, gapseq, opt1
+    global brk, redntID, tlen, seqnum, optN_n_M, argSs, cnt, gapTotal, gapseq, opt1, overwrite_files
     global gap10, gap100, gap500, gap1k, gap10k
     cnt = cnt + 1
 
@@ -307,18 +309,23 @@ def fatools(record, lastEntry):
         defn = ">{}".format(lines[0].strip('>'))
         defn_old = defn  # copy of old defn
         seqf = lines[1]
+        seq = lines[1].strip('\t\n\r').replace('\n', '')
     except(IndexError):
         # Empty Sequence!
-        return
+        seqf = ''
+        seq = ''
 
-    seq = lines[1].strip('\t\n\r').replace('\n', '')
     seq_old = seq  # copy of old seq
-    seq_len = len(seq)
+
+    if seq.isalpha():
+        seq_len = len(seq)
+    else:
+        seq_len = len(re.sub('[^a-zA-Z]', '', seq))
 
     if sys.argv[1] == 'convert':
         validOpt = False;
         for o, a in opts:
-        # turn all non-ACTG letters to N
+            # turn all non-ACTG letters to N
             if o == '-N':
                 seq.strip(r'\W')
                 seq = acgtton(seq)
@@ -352,10 +359,11 @@ def fatools(record, lastEntry):
             get_options(sys.argv[1])
             sys.exit()
 
-
     elif sys.argv[1] == 'search':
         next = False
         negate, opt_d, opt_s = False, False, False
+        sequence_found = False
+
         for o, a in opts:
             if o == '-v':
                 negate = True
@@ -368,20 +376,34 @@ def fatools(record, lastEntry):
             if o == '-s':
                 opt_s = True
                 look_for_str = a
+                look_rvrs_comp = reversecom(look_for_str)
 
         if not opt_d and not opt_s and not opt1:
             get_options(sys.argv[1])
             sys.exit()
         if o == '-1':
             opt1 = True
-        if (opt_d and negate and re.search(look_for_str, defn, re.IGNORECASE)) or (opt_s and negate and re.search(look_for_str, seq, re.IGNORECASE)):
+
+        if opt_s and (re.search(look_for_str, seq, re.IGNORECASE) or re.search(look_rvrs_comp, seq, re.IGNORECASE)):
+            sequence_found = True
+
+        if (opt_d and negate and re.search(look_for_str, defn, re.IGNORECASE)) or (negate and sequence_found):
             next = True
         elif (opt_d and not re.search(look_for_str, defn, re.IGNORECASE) and not negate) or (
-                opt_s and not re.search(look_for_str, seq, re.IGNORECASE) and not negate):
+                opt_s and not sequence_found and not negate):
             next = True
 
         if next:
             return
+
+        # make matching motif lower case and the rest of the sequence upper case
+        if not negate and opt_s:
+            seqf = seqf.upper()
+            seq_split = seqf.split(look_for_str.upper())
+            seqf = look_for_str.lower().join(seq_split)
+            seq_split = seqf.split(look_rvrs_comp.upper())
+            seqf = look_rvrs_comp.lower().join(seq_split)
+
         print("{}\n{}".format(defn, seqf))
         if opt1:
             brk = True
@@ -393,13 +415,26 @@ def fatools(record, lastEntry):
         sectn = 1
         sectn_s = 0
         sectnlgth_temp = 0
+        output_prefix_provided = False
         for o, a in opts:
+            if o == '-o':
+                output_prefix_provided = True
+                if not overwrite_files:
+                    for filename in os.listdir(os.getcwd()):
+                        if a + '_sub' in filename:
+                            ovwrt = raw_input('The prefix provided is already being used. Would you like to '
+                                              'overwrite the existing files? (y/n)\n').strip()
+                            if ovwrt == 'n':
+                                sys.exit()
+                            elif ovwrt == 'y':
+                                overwrite_files = True
+                                break
+
             # divide into chunks options
             if (o == '-N') or (o == "-n") or (o == "-M"):
                 fa_dict = {'D': defn, 'S': seq}
                 fa_list.append(fa_dict)
                 optN_n_M = True
-                break
             # split as non-gap fragments option
             elif o == '-G':
                 optG = True
@@ -407,8 +442,12 @@ def fatools(record, lastEntry):
             # print gap position only
             elif o == '-t':
                 optt = True
+
         if not optN_n_M and not optt and not optG:
             get_options(sys.argv[1])
+            sys.exit()
+        if not output_prefix_provided and not optG:
+            sys.stderr.write("Please provide output prefix with -o prefix")
             sys.exit()
         if optN_n_M and not lastEntry:
             return
@@ -439,7 +478,8 @@ def fatools(record, lastEntry):
                     sectnlgth = len(nongap[sectn - 1])
                     sectnlgth_temp += sectnlgth
                     sectn_e = sectn_s + sectnlgth_temp
-                    print(defn + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) + '-' + str(sectn_e) + '|gap|-1')
+                    print(defn + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) + '-' + str(
+                        sectn_e) + '|gap|-1')
                     print(nongap[sectn - 1])
             # print the original if no gap
             else:
@@ -459,7 +499,7 @@ def fatools(record, lastEntry):
             if o == '-L':
                 last_Nseq = True
                 last_Nseq_arg = int(a)
-                fa_list.append(fasta)
+                fa_list.append("{}\n{}".format(defn, seqf))
 
             if o == '-F':  # extract the first N sequence entries
                 first_Nseq = True
@@ -470,7 +510,7 @@ def fatools(record, lastEntry):
             elif o == '-S':  # extract from the Nth entry to the last
                 N_to_last = True
                 if lastEntry:
-                    if int(a) > cnt+1:
+                    if int(a) > cnt + 1:
                         sys.stderr.write("N larger than the total number of entries.\n")
                 if cnt + 1 < int(a):
                     next = True
@@ -516,7 +556,8 @@ def fatools(record, lastEntry):
                 pass
             else:
                 print(defn + '\n' + seqf + '\n')
-        extractFromSeq(fromNbps, fromNbps_arg, firstNbps, firstNbps_arg, lastNbps, lastNbps_arg, seq_len, seq_old, defn_old)
+        extractFromSeq(fromNbps, fromNbps_arg, firstNbps, firstNbps_arg, lastNbps, lastNbps_arg, seq_len, seq_old,
+                       defn_old)
 
         if not first_Nseq and not N_to_last and not last_Nseq and not fromNbps and not firstNbps and not lastNbps:
             get_options(sys.argv[1])
@@ -524,7 +565,9 @@ def fatools(record, lastEntry):
 
     elif sys.argv[1] == 'report':
         tlen += seq_len
-        seqnum += 1
+        # seqnum will keep track of non-empty sequences
+        if seq != '':
+            seqnum += 1
         n50raw.append(seq_len)
         optl, optL, optdD, optfF, optnd, optC = False, False, False, False, False, False
         validOpt = False
@@ -721,7 +764,7 @@ def fatools(record, lastEntry):
                 s = fa_list.pop(0)
                 if optM:
                     # sequence length in MB
-                    count += len(s['S'])/1048576.0
+                    count += len(s['S']) / 1048576.0
                 else:
                     count += 1
                 if count > chunksize:
@@ -734,29 +777,76 @@ def fatools(record, lastEntry):
             chunkfile.close()
         # summary
         if argSs:
+            print_with_gap, disable_header, human_readable = False, False, False
+
+            for o, a in opts:
+                if o == '-S':
+                    print_with_gap = True
+                if o == '-h' or a == '-h':
+                    disable_header = True
+                if o == '-H' or a == '-H':
+                    human_readable = True
+
             Tlen = 0
             avg = int(tlen / seqnum)
             # sorting lengths from smallest to largest
             n50raw.sort()
-            max = n50raw[-1]
-            min = n50raw[0]
+            max_ = n50raw[-1]
+            min_ = n50raw[0]
             for lenn in n50raw:
                 Tlen += lenn
                 if Tlen >= tlen / 2:
                     N50s = lenn
                     break
             tmpall = cnt + 1
-            mssg = '\nTotal {} bps from qualified {} sequences ({} total); length average: {} ({}-{}) bp; N50: {} bp'.format(
-                format(tlen, ",d"), format(seqnum, ",d"), tmpall, avg, min, max, format(N50s, ",d"))
+
+            sampleID = sys.argv[-1]
+            if "." in sampleID:
+                sampleID = sampleID.split(".")[0]
+
+            non_gap = tlen - gapTotal
+            seqnum = format(seqnum, ",d")
+            tlen = format(tlen, ",d")
+            avg = format(avg, ",d")
+            min_ = format(min_, ",d")
+            max_ = format(max_, ",d")
+            N50s = format(N50s, ",d")
+
+            # add some buffer spaces to make it human readable
+            if human_readable:
+                mssg = "{}  {}  {}  {}  {}-{}  {}  ".format(sampleID, " "*(abs(min(len(sampleID)-8, 0)))+seqnum,
+                                                            " "*(abs(min(len(seqnum)-4, 0)))+tlen,
+                                                            " "*(abs(min(len(tlen)-11, 0)))+avg,
+                                                            " "*(abs(min(len(avg)-7, 0)))+min_, max_,
+                                                            " "*(abs(min(len(max_)+len(min_)+1-7, 0)))+N50s)
+                header = "sampleID{}  Seq#{}  totalSeqLen{}  Average{}  min-max{}  N50".format(
+                    " "*max(len(sampleID)-8, 0), " "*max(len(seqnum)-4, 0), " "*max(len(tlen)-11, 0),
+                    " "*max(len(avg)-7, 0), " "*max((len(min_) + len(max_)+1-7), 0))
+
+                if print_with_gap:
+                    non_gap = format(non_gap, ",d")
+                    gapTotal = format(gapTotal, ",d")
+                    header += "  {}  nonGapLen{}  GapLen{}  Gap#@10;100;500;1k;>1k bp".format(
+                        " "*max(len(N50s) - 3, 0), " " * max(len(non_gap) - 9, 0), " " * max(len(gapTotal) - 6, 0))
+                    mssg += "  {}  {}  {};{};{};{};{}".format(" "*abs(min(len(N50s)-3, 0))+non_gap,
+                                                                 " "*abs(min(len(non_gap)-9,0))+gapTotal,
+                                                                 " "*abs(min(len(gapTotal)-6, 0))+str(gap10),
+                                                           gap100, gap500, gap1k, gap10k)
+                print(header)
+            else:
+                mssg = "{} {} {} {} {}-{} {}".format(sampleID, seqnum, tlen, avg, min_, max_, N50s)
+                header = "(sampleID/Seq#/totalSeqLen/Average/min-max/N50"
+                if print_with_gap:
+                    non_gap = format(non_gap, ",d")
+                    gapTotal = format(gapTotal, ",d")
+                    mssg += " {} {} {};{};{};{};{}".format(non_gap, gapTotal, gap10, gap100, gap500, gap1k, gap10k)
+                    header += "/nonGapLen/GapLen/Gap#@10;100;500;1k;>1k bp"
+                header += ")"
+                if not disable_header:
+                    print(header)
+
             print(mssg)
-            # sys.stderr.write(mssg)
-            for o, a in opts:
-                if o == '-S':
-                    non_gap = tlen - gapTotal
-                    print(
-                        'Gap info: {} sequences with gaps for a total of {} estimated bps; non-gap: {} bps; gap size: <11bp: {}; <101bp: {}; <500bp: {}; <1kp: {}; >1kp: {}.'.format(
-                            gapseq, format(gapTotal, ",d"), format(non_gap, ",d"), gap10, gap100, gap500, gap1k, gap10k))
-                    break
+
 
 def searchByID(entry, IDset, search_negate):
     """Searches for entries based on a list of IDs"""
@@ -823,34 +913,37 @@ if __name__ == "__main__":
             if o == '-v':
                 search_negate = True
 
-    if searchf:
-        IDset = set()
-        with open(list_ID, 'r') as IDs:
-            for line in IDs:
-                IDlen = IDlen + 1
-                IDset.add(line.strip())
+    try:
+        if searchf:
+            IDset = set()
+            with open(list_ID, 'r') as IDs:
+                for line in IDs:
+                    IDlen = IDlen + 1
+                    IDset.add(line.strip())
 
-        if database == "-":
-            d = sys.stdin
-            read_file_bytes(d, [2, IDset, search_negate])
+            if database == "-":
+                d = sys.stdin
+                read_file_bytes(d, [2, IDset, search_negate])
+            else:
+                try:
+                    with open(database, 'rb') as d:
+                        read_file_bytes(d, [2, IDset, search_negate])
+                except IOError:
+                    print('{} is not a file'.format(database))
         else:
-            try:
-                with open(database, 'rb') as d:
-                    read_file_bytes(d, [2, IDset, search_negate])
-            except IOError:
-                print('{} is not a file'.format(database))
-    else:
-        if sys.argv[-1] == "-":
-            # read input from stdin
-            pipe_input = sys.stdin
-            read_file_bytes(pipe_input, [1])
-        else:
-            # read file in byte chunks
-            try:
-                with open(sys.argv[-1], 'rb') as f:
-                    read_file_bytes(f, [1])
-            except IOError:
-                print('{} is not a file'.format(sys.argv[-1]))
+            if sys.argv[-1] == "-":
+                # read input from stdin
+                pipe_input = sys.stdin
+                read_file_bytes(pipe_input, [1])
+            else:
+                # read file in byte chunks
+                try:
+                    with open(sys.argv[-1], 'rb') as f:
+                        read_file_bytes(f, [1])
+                except IOError:
+                    print('{} is not a file'.format(sys.argv[-1]))
+    except (KeyboardInterrupt, IOError):
+        sys.exit()
 
     try:
         sys.stdout.close()
