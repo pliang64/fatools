@@ -1,3 +1,4 @@
+#!/cvmfs/soft.computecanada.ca/nix/var/nix/profiles/16.09/bin/python
 # Rodrigo Vega 2020
 # adapted from Ping Liang's perl version of the fatools 2019
 import getopt
@@ -32,31 +33,34 @@ def get_options(command):
     cmmnd = False
     if command == 'convert':
         print("\nUsage: " + sys.argv[0] + """ convert [options] inputfasta | - (stdin)
-        -r print sequence in reverse compliment.
         -N convert all non-ACGT letters to N.
         -R remove all non-ACGT letters.
+        -r print sequence in reverse compliment.      
         -U for upper case
         -u for lower case\n
         """)
     elif command == 'search':
         print("\nUsage: " + sys.argv[0] + """ search [options] inputfasta | - (stdin)
         search options: 
-        -s  string: search for entries containing "string" in the sequence
         -d  string: search for entries containing "string" in the defline: Default is for exact match, use
-            "/string" for flexibility                    
+            "/string" for flexibility.
+            -1  print only the 1st match
+            -v  negate the search
         -F  file: search for sequences for a list of IDs in the file (one ID/line). 
-            Can use -D to specify delimiter in the defline. Default is space, '|' or end of line. 
-            use -i to specify the field number, default is 1.
-        -1  print only the 1st match for -d and -s.
-        -v  use with -s, -d or -F to negate the search\n
+            -D  specify delimiter in the defline. Default is space, '|' or end of line. 
+            -i  specify the field number, default is 1.
+            -v  negate the search
+        -s  string: search for entries containing "string" in the sequence
+            -1  print only the 1st match   
+            -v  negate the search\n
          """)
     elif command == 'split':
         print("\nUsage: " + sys.argv[0] + """ split [options] inputfasta | - (stdin)  
         split options:
-        -G N split the sequences as non-gap framments, N is the number of consecutive Ns, default 1
-         Use -G with -t to  print gap positions only.
-        -n N plit the input sequences into chunks, each containing N fasta entries (the last chunk may be less). 
+        -G N split the sequences as non-gap fragments, N is the number of consecutive Ns, default 1
+            -P  print gap positions only.
         -N N split the input sequences into N chunks, each containing equal number of entries (last one may be smaller).
+        -n N plit the input sequences into chunks, each containing N fasta entries (the last chunk may be less). 
         -M N split the input sequences into chunks at ~N MB (million bp) in size (last chunk may be smaller).
         -o "prefix" for output files (serial numbers added to prefix; required).\n
         """)
@@ -65,48 +69,51 @@ def get_options(command):
         extract options:
         -F N extract the first N fasta entries, if N is larger than the total number of entries, 
             then print to the last entries.
-        -S N extract from the Nth entry to the last entry.
+        -f N extract first N bp, prints the entire sequence if N is larger than the total length.
         -L N extract last N sequence entries. If N is larger than the total number of entries, then print all entries.
+        -l N extract last N bp, prints the entire sequence if N is larger than the total length.
+        -S N extract from the Nth entry to the last entry.   
+        -s N extract from N bp to the end.   
 
         Use -S N -F M for entries from N to M; use -F N and -L N to extract both the first and last N entries.
-
-        -f N extract first N bp, prints the entire sequence if N is larger than the total length.
-        -s N extract from N bp to the end.
-        -l N extract last N bp, prints the entire sequence if N is larger than the total length.
-            Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
-            one sequence separated by a space.
-
+        Use -s N -f M for sequence from N to M bp; use -f N and -l N to extract both the first and last N bp as 
+          one sequence separated by a space.
         Note: The -f, -s, and -l options were designed for working with a single long sequences, even though they will 
-              work for multiple sequences by applying the same operation to all sequences\n
+          work for multiple sequences by applying the same operation to all sequences.\n
         """)
     elif command == 'report':
         print("\nUsage: " + sys.argv[0] + """ report [options] inputfasta | - (stdin)
         report options:
-        -f print fasta entries as in the input.
-        -F print fasta entries with all sequence in one line.
-        -n print sequences without the define.
-        -d print deflines in short form (part before the first space).
-        -D print deflines in the original form.    
         -c print the total number of fasta entries in the input.
-        -l print short defline +[\\t] length.
+        -D print deflines in the original form. 
+        -d print deflines in short form (part before the first space). 
+        -F print fasta entries with all sequence in one line.
+        -f print fasta entries as in the input.
         -L print original defline +[\\t] length.
-        -s print sequence summary statistics including N50.
+        -l print short defline +[\\t] length.
+        -n print sequences without the define.
         -S print sequence summary statistics plus detailed gap info.
-            Use -h with -s and -S to disable the header above the outputs
-            Use -H to print parameters in human friendly form.  \n
+            -h  disable the header above the outputs
+            -H  print parameters in human friendly form
+        -s print sequence summary statistics including N50.
+            -h  disable the header above the outputs
+            -H  print parameters in human friendly form\n
         """)
     elif command == 'filter':
         print("\nUsage: " + sys.argv[0] + """ filter [options] inputfasta | - (stdin)
         filter options:
         -g N ignore sequences with N or more Ns 
-        -r 1/2 1: skip redundant entry based ID 2: keep redundant entries by adding 
-         a serial number to the identical IDs to make each unique.
-        -R 1/N skip redundant entries based on sequence. 
-           1: use the entire sequence;  N: use only the first and last N bases.
-        -l N  skip sequences shorter than N bp.
         -L N  skip sequences longer than N bp.
-           use -l N -L M for sequences with length from N to M bp (inclusive).
-        In all options, '-e' can be added to print the skipped entries in STDERR, which can be captured using 2>[skipped.fa].\n
+        -l N  skip sequences shorter than N bp.  
+        -R 1/N skip redundant entries based on sequence. 
+            1:  use the entire sequence
+            N:  use only the first and last N bases.    
+        -r 1/2 
+            1:  skip redundant entry based ID 
+            2:  keep redundant entries by adding a serial number to the identical IDs to make each unique.
+             
+        Use -l N -L M for sequences with length from N to M bp (inclusive).
+        With all options, '-e' can be added to print the skipped entries in STDERR, which can be captured using 2>[skipped.fa].\n
         """)
     else:
         cmmnd = True
@@ -124,7 +131,8 @@ justCommands = "\nUsage: " + sys.argv[0] + """ command option(s) inputfasta | - 
     """
 
 try:
-    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:f:tvthUuecH1')
+    # define the options used by the program and user
+    opts, args = getopt.getopt(argv, 'd:D:W:s:S:n:N:M:o:G:F:B:I:i:E:p:l:L:r:R:g:f:tvthUuecHP1')
 except:
     print(justCommands)
     sys.exit()
@@ -409,7 +417,7 @@ def fatools(record, lastEntry):
             brk = True
 
     elif sys.argv[1] == 'split':
-        optt = False
+        pos_only = False
         optG = False
         optN_n_M = False
         sectn = 1
@@ -440,10 +448,10 @@ def fatools(record, lastEntry):
                 optG = True
                 num = a
             # print gap position only
-            elif o == '-t':
-                optt = True
+            elif o == '-P':
+                pos_only = True
 
-        if not optN_n_M and not optt and not optG:
+        if not optN_n_M and not pos_only and not optG:
             get_options(sys.argv[1])
             sys.exit()
         if not output_prefix_provided and not optG:
@@ -454,6 +462,7 @@ def fatools(record, lastEntry):
 
         if optG:
             match_g = re.search(r'[Nn]{' + num + ',}', seq)
+            def_short = defn.split(" ")[0]
             if match_g:
                 match_g = re.finditer(r'[Nn]{' + num + ',}', seq)
                 for gap in match_g:
@@ -461,29 +470,30 @@ def fatools(record, lastEntry):
                     e = gap.end()
                     l = len(gap.group())
                     # print gap positions only
-                    if optt:
-                        print(defn + '\t' + str(s) + '\t' + str(e))
+                    if pos_only:
+                        print(def_short + '\t' + str(s) + '\t' + str(e))
                     else:
                         nongap = re.split(r'[Nn]{' + num + ',}', seq)
                         length = len(nongap)
                         sectnlgth = len(nongap[sectn - 1])
                         sectnlgth_temp = sectnlgth
                         sectn_e = sectn_s + sectnlgth_temp
-                        print(defn + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) +
-                              '-' + str(sectn_e) + '|gap|' + str(l) + '|' + str(s) + '-' + str(e))
-                        print(nongap[sectn - 1])
+                        if sectnlgth > 0:
+                            print(def_short + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) +
+                                  '-' + str(sectn_e) + '|gap|' + str(l) + '|' + str(s) + '-' + str(e))
+                            print(nongap[sectn - 1])
                         sectn += 1
                         sectn_s += sectnlgth + l
-                if not optt:
+                if not pos_only:
                     sectnlgth = len(nongap[sectn - 1])
-                    sectnlgth_temp += sectnlgth
-                    sectn_e = sectn_s + sectnlgth_temp
-                    print(defn + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) + '-' + str(
-                        sectn_e) + '|gap|-1')
-                    print(nongap[sectn - 1])
+                    if sectnlgth > 0:
+                        print(def_short + '|' + str(sectn) + '/' + str(length) + '|' + str(sectn_s) + '-' + str(
+                            sectn_e) + '|gap|-1')
+                        print(nongap[sectn - 1])
+                    print("\n")
             # print the original if no gap
-            else:
-                print("{}\n{}".format(defn, seqf))
+            elif not pos_only:
+                print("{} 1-{}\n{}".format(def_short, seq_len, seqf))
             return
     elif sys.argv[1] == 'extract':
         first_Nseq = False
