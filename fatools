@@ -16,6 +16,7 @@ brk = False
 # for usage in chunk command
 fa_list = []
 tlen, seqnum, gap10, gap100, gap500, gap1k, gap10k, gapTotal, gapseq, field, redntID, gapPattern = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+gc_count = 0
 delimeter, argSs, optN_n_M, opt1, overwrite_files = False, False, False, False, False
 
 id_del_set = set()
@@ -302,7 +303,7 @@ def countGaps(gap):
 
 def fatools(record, lastEntry):
     """Tools to manipulate FASTA sequences"""
-    global brk, redntID, tlen, seqnum, optN_n_M, argSs, cnt, gapTotal, gapseq, opt1, overwrite_files
+    global brk, redntID, tlen, seqnum, optN_n_M, argSs, cnt, gapTotal, gapseq, opt1, overwrite_files, gc_count
     global gap10, gap100, gap500, gap1k, gap10k
     cnt = cnt + 1
 
@@ -583,50 +584,57 @@ def fatools(record, lastEntry):
         validOpt = False
         global gapPattern
         for o, a in opts:
+            # count fasta entries
             if o == '-c':
                 optC = True
                 validOpt = True
                 break
             # summary
             if (o == '-S') or (o == '-s'):
+                # count G and C base pairs
+                for bp in seq:
+                    bp = bp.upper()
+                    if bp == "G" or bp == "C":
+                        gc_count += 1
                 if argSs == False:
                     gapPattern = re.compile(r'[Nn]{1,}')
                 argSs = True
                 validOpt = True
-            # summary with gap info
-            if o == '-S':
-                if 'N' in seq or 'n' in seq:
-                    match_su = gapPattern.finditer(seq)
-                    gapseq += 1
-                    [countGaps(gaps) for gaps in match_su]
-
+                # count gaps and gap length
+                match_su = gapPattern.finditer(seq)
+                gapseq += 1
+                [countGaps(gaps) for gaps in match_su]
+            # print short defline
             if o == '-l':
                 optl = True
                 validOpt = True
+            # print original defline
             if o == '-L':
                 optL = True
                 validOpt = True
-
+            # print fasta entries as in the input
             if o == '-f':
                 print("{}\n{}".format(defn, seqf))
                 optfF = True
                 validOpt = True
+            # print sequence in one line
             elif o == '-F':
                 print(defn + '\n' + seq + '\n')
                 optfF = True
                 validOpt = True
+            # sequence without defline
             elif o == '-n':
                 print(seqf + '\n')
                 optnd = True
                 validOpt = True
-
+            # print defline in short form
             if o == '-d':
                 optdD = True
                 defn = defn.strip('>')
                 defn = re.search(r'[^\s]*', defn)
                 defn = defn.group()
                 validOpt = True
-
+            # print original defline
             elif o == '-D':
                 optdD = True
                 defn = defn.strip('>')
@@ -815,6 +823,8 @@ def fatools(record, lastEntry):
                 sampleID = sampleID.split(".")[0]
 
             non_gap = tlen - gapTotal
+            gc_content = ( gc_count/float(non_gap) ) * 100
+            gc_content = "{:.2f}".format(gc_content) + "%"
             seqnum = format(seqnum, ",d")
             tlen = format(tlen, ",d")
             avg = format(avg, ",d")
@@ -824,14 +834,15 @@ def fatools(record, lastEntry):
 
             # add some buffer spaces to make it human readable
             if human_readable:
-                mssg = "{}  {}  {}  {}  {}-{}  {}  ".format(sampleID, " "*(abs(min(len(sampleID)-8, 0)))+seqnum,
+                mssg = "{}  {}  {}  {}  {}  {}-{}  {}  ".format(sampleID, " "*(abs(min(len(sampleID)-8, 0)))+seqnum,
                                                             " "*(abs(min(len(seqnum)-4, 0)))+tlen,
-                                                            " "*(abs(min(len(tlen)-11, 0)))+avg,
+                                                            " "*(abs(min(len(tlen)-11, 0)))+gc_content,
+                                                            " "*(abs(min(len(gc_content)-9, 0)))+avg,
                                                             " "*(abs(min(len(avg)-7, 0)))+min_, max_,
                                                             " "*(abs(min(len(max_)+len(min_)+1-7, 0)))+N50s)
-                header = "sampleID{}  Seq#{}  totalSeqLen{}  Average{}  min-max{}  N50".format(
+                header = "sampleID{}  Seq#{}  totalSeqLen{}  GCcontent{}  Average{}  min-max{}  N50".format(
                     " "*max(len(sampleID)-8, 0), " "*max(len(seqnum)-4, 0), " "*max(len(tlen)-11, 0),
-                    " "*max(len(avg)-7, 0), " "*max((len(min_) + len(max_)+1-7), 0))
+                    " "*max(len(gc_content)-9, 0), " "*max(len(avg)-7, 0), " "*max((len(min_) + len(max_)+1-7), 0))
 
                 if print_with_gap:
                     non_gap = format(non_gap, ",d")
@@ -844,8 +855,8 @@ def fatools(record, lastEntry):
                                                            gap100, gap500, gap1k, gap10k)
                 print(header)
             else:
-                mssg = "{} {} {} {} {}-{} {}".format(sampleID, seqnum, tlen, avg, min_, max_, N50s)
-                header = "(sampleID/Seq#/totalSeqLen/Average/min-max/N50"
+                mssg = "{} {} {} {} {} {}-{} {}".format(sampleID, seqnum, tlen, gc_content, avg, min_, max_, N50s)
+                header = "(sampleID/Seq#/totalSeqLen/GCcontent/Average/min-max/N50"
                 if print_with_gap:
                     non_gap = format(non_gap, ",d")
                     gapTotal = format(gapTotal, ",d")
