@@ -1,4 +1,4 @@
-<h2>fatools: A utility package written in python for working with fasta sequences.</h2>
+<h2>fatools: A python utility package for working with large-scale fasta sequences</h2>
 
 A total of 30 utilities/options for common operarations with fasta sequences are currently organized under 6 main subcommands.
 The utilities range from searching specific sequence entries from a large set of fasta sequences based on 
